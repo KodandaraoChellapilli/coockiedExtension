@@ -1,0 +1,195 @@
+// import { Component } from '@angular/core';
+// import { CommonModule } from '@angular/common';
+// import { FormsModule } from '@angular/forms';
+// import { HttpClientModule } from '@angular/common/http';
+
+// @Component({
+//   selector: 'app-home',
+//   standalone: true,
+//   imports: [CommonModule, FormsModule, HttpClientModule],
+//   templateUrl: './home.html',
+//   styleUrls: ['./home.css'],
+// })
+// export class Home {
+//   cookies: chrome.cookies.Cookie[] = [];
+//   blockUrl: string = ''; // URL to block HTTP cookies from
+
+//   // Get all cookies for Google
+//   getCookies() {
+//     chrome.cookies.getAll({ url: 'https://www.google.com' }, (cookies: chrome.cookies.Cookie[]) => {
+//       this.cookies = cookies;
+//     });
+//   }
+
+//   // Delete a specific cookie
+//   deleteCookie(cookie: chrome.cookies.Cookie) {
+//     chrome.cookies.remove(
+//       {
+//         url: 'https://' + cookie.domain + cookie.path,
+//         name: cookie.name,
+//       },
+//       () => {
+//         this.getCookies(); // refresh list
+//       }
+//     );
+//   }
+
+//   // Block HTTP cookies for the entered URL
+//   blockHttpCookie() {
+//     if (!this.blockUrl) return alert('Enter URL to block HTTP cookies!');
+
+//     const rule: chrome.declarativeNetRequest.Rule = {
+//       id: Date.now(),
+//       priority: 1,
+//       action: { type: 'block' as chrome.declarativeNetRequest.RuleActionType },
+//       condition: {
+//         urlFilter: this.blockUrl,
+//         resourceTypes: ['main_frame', 'sub_frame', 'xmlhttprequest', 'script', 'image'],
+//       },
+//     };
+
+//     chrome.declarativeNetRequest.updateDynamicRules(
+//       {
+//         addRules: [rule],
+//         removeRuleIds: [],
+//       },
+//       () => {
+//         alert(`HTTP cookies blocked for ${this.blockUrl}`);
+//       }
+//     );
+//   }
+// // }
+// import { Component } from '@angular/core';
+// import { CommonModule } from '@angular/common';
+// import { FormsModule } from '@angular/forms';
+// import { HttpClientModule } from '@angular/common/http';
+
+// @Component({
+//   selector: 'app-home',
+//   standalone: true,
+//   imports: [CommonModule, FormsModule, HttpClientModule],
+//   templateUrl: './home.html',
+//   styleUrls: ['./home.css'],
+// })
+// export class Home {
+//   cookies: chrome.cookies.Cookie[] = [];
+//   blockUrl: string = ''; // URL to block HTTP cookies
+//   getUrl: string = ''; // URL to fetch cookies from
+
+//   // Get all cookies for a given URL
+//   getCookies() {
+//     const urlInput = this.getUrl.trim();
+//     const url = urlInput || 'https://www.google.com';
+
+//     chrome.cookies.getAll({ url }, (cookies: chrome.cookies.Cookie[]) => {
+//       this.cookies = cookies;
+//       if (!cookies.length) {
+//         alert(`No cookies found for ${url}`);
+//       }
+//     });
+//   }
+
+//   // Delete a specific cookie
+//   deleteCookie(cookie: chrome.cookies.Cookie) {
+//     // Remove leading dot from domain if present
+//     const domain = cookie.domain.startsWith('.') ? cookie.domain.substring(1) : cookie.domain;
+//     const url = `https://${domain}${cookie.path}`;
+//     chrome.cookies.remove({ url, name: cookie.name }, () => {
+//       // Refresh the cookie list after deletion
+//       this.getCookies();
+//     });
+//   }
+
+//   // Block HTTP cookies for the entered URL
+//   blockHttpCookie() {
+//     const urlInput = this.blockUrl.trim();
+//     if (!urlInput) {
+//       return alert('Enter URL to block HTTP cookies!');
+//     }
+
+//     // Remove protocol (http/https) and trailing slash
+//     let url = urlInput.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+//     // Create pattern for declarativeNetRequest
+//     const urlPattern = `*://${url}/*`;
+
+//     // Unique rule ID
+//     const ruleId = Math.floor(Date.now() % 2147483647);
+
+//     const rule: chrome.declarativeNetRequest.Rule = {
+//       id: ruleId,
+//       priority: 1,
+//       action: { type: 'block' as chrome.declarativeNetRequest.RuleActionType },
+//       condition: {
+//         urlFilter: urlPattern,
+//         resourceTypes: ['main_frame', 'sub_frame', 'xmlhttprequest', 'script', 'image'],
+//       },
+//     };
+
+//     chrome.declarativeNetRequest.updateDynamicRules({ addRules: [rule], removeRuleIds: [] }, () => {
+//       alert(`HTTP cookies blocked for ${urlInput}`);
+//       this.blockUrl = ''; // clear input
+//     });
+//   }
+// }
+
+// import { Component } from '@angular/core';
+// import { CommonModule } from '@angular/common';
+// import { FormsModule } from '@angular/forms';
+// import { HttpClientModule } from '@angular/common/http';
+
+// @Component({
+//   selector: 'app-home',
+//   standalone: true,
+//   imports: [CommonModule, FormsModule, HttpClientModule],
+//   templateUrl: './home.html',
+//   styleUrls: ['./home.css'],
+// })
+// export class Home {
+//   cookies: chrome.cookies.Cookie[] = [];
+//   blockUrl: string = ''; // URL to block HTTP cookies
+//   getUrl: string = '';   // URL to fetch cookies
+
+//   // Get cookies for a URL
+//   getCookies() {
+//     const url = this.getUrl.trim() || 'https://www.google.com';
+//     chrome.cookies.getAll({ url }, (cookies: chrome.cookies.Cookie[]) => {
+//       this.cookies = cookies;
+//     });
+//   }
+
+//   // Delete a specific cookie
+//   deleteCookie(cookie: chrome.cookies.Cookie) {
+//     const domain = cookie.domain.startsWith('.') ? cookie.domain.substring(1) : cookie.domain;
+//     const url = `https://${domain}${cookie.path}`;
+//     chrome.cookies.remove({ url, name: cookie.name }, () => {
+//       this.getCookies(); // refresh list
+//     });
+//   }
+
+//   // Block HTTP cookies
+//   blockHttpCookie() {
+//     const url = this.blockUrl.trim();
+//     if (!url) return alert('Enter URL to block HTTP cookies!');
+
+//     const urlPattern = url.includes('*') ? url : `*://${url}/*`;
+//     const ruleId = Math.floor(Date.now() % 2147483647); // unique rule ID
+
+//     const rule: chrome.declarativeNetRequest.Rule = {
+//       id: ruleId,
+//       priority: 1,
+//       action: { type: 'block' as chrome.declarativeNetRequest.RuleActionType },
+//       condition: {
+//         urlFilter: urlPattern,
+//         resourceTypes: ['main_frame', 'sub_frame', 'xmlhttprequest', 'script', 'image'],
+//       },
+//     };
+
+//     chrome.declarativeNetRequest.updateDynamicRules(
+//       { addRules: [rule], removeRuleIds: [] },
+//       () => {
+//         alert(`HTTP cookies blocked for ${url}`);
+//       }
+//     );
+//   }
+// }

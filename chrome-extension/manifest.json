@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "ObservePoint Cookie Extension",
+  "version": "1.0",
+  "description": "Manage and block cookies from a webpage.",
+  "permissions": [
+    "cookies",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "action": {
+    "default_popup": "index.html"
+  }
+}

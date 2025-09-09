@@ -1,0 +1,25 @@
+/* Body background and font */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1e90ff, #0f75d1);
+}
+
+/* Flex container for side by side cards */
+.main-container {
+  display: flex;
+  justify-content: center; /* center horizontally */
+  align-items: flex-start; /* align to top */
+  gap: 30px; /* space between cards */
+  padding: 50px;
+  flex-wrap: wrap; /* responsive wrap on small screens */
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 800px) {
+  .main-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+}
