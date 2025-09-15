@@ -1,17 +1,23 @@
-.login-card h2 {
-  color: #1e90ff;
-  margin-bottom: 20px;
+.card.header-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 320px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  margin: 10px auto;
 }
-
-input {
+.header-card h2 {
+  color: #1e90ff;
+  margin-bottom: 12px;
+}
+.header-card input {
   width: 90%;
   padding: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 14px;
 }
-
 .primary-btn {
   width: 95%;
   padding: 10px;
@@ -19,11 +25,8 @@ input {
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 15px;
   cursor: pointer;
-  transition: background 0.3s;
 }
-
 .primary-btn:hover {
   background-color: #0f75d1;
 }

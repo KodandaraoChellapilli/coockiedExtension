@@ -1,40 +1,36 @@
 <div class="home-container">
   <h2>🍪 Cookie Manager</h2>
 
-  <!-- Explanation -->
   <p class="explanation">
     <strong>Note:</strong> Deleting a cookie removes it immediately. Blocking a cookie prevents it
     from being set in the future using the Chrome extension API.
   </p>
 
-  <!-- Input to get cookies from any URL -->
   <input
     type="text"
     placeholder="Enter URL to fetch cookies (e.g., https://www.google.com)"
     [(ngModel)]="getUrl"
     class="url-input"
   />
-  <button class="primary-btn" (click)="getCookies()">Get Cookies</button>
+  <button class="primary-btn" (click)="fetchCookies()">Get Cookies</button>
 
-  <!-- List cookies -->
   <ul class="cookie-list">
-    <li *ngFor="let cookie of cookies">
+    <li *ngFor="let c of cookies">
       <div class="cookie-details">
-        <strong>{{ cookie.name }}</strong
-        >: {{ cookie.value }}<br />
-        <small>
-          Domain: {{ cookie.domain }} | Path: {{ cookie.path }} | Expires:
-          {{ cookie.expirationDate || 'Session' }} | Secure: {{ cookie.secure }} | HttpOnly:
-          {{ cookie.httpOnly }}
-        </small>
+        <strong>{{ c.name }}</strong
+        >: {{ c.value }}<br />
+        <small
+          >Domain: {{ c.domain }} | Path: {{ c.path }} | Expires:
+          {{ c.expirationDate || 'Session' }} | Secure: {{ c.secure }} | HttpOnly:
+          {{ c.httpOnly }}</small
+        >
       </div>
-      <button class="delete-btn" (click)="deleteCookie(cookie)">Delete</button>
+      <button class="delete-btn" (click)="onDeleteCookie(c)">Delete</button>
     </li>
   </ul>
 
   <hr />
 
-  <!-- Block HTTP cookies -->
   <div class="block-section">
     <input
       type="text"
@@ -42,6 +38,27 @@
       [(ngModel)]="blockUrl"
       class="url-input"
     />
-    <button class="block-btn" (click)="blockHttpCookie()">Block HTTP Cookies</button>
+    <button class="block-btn" (click)="onBlockHttpCookie()">Block HTTP Cookies</button>
+  </div>
+
+  <hr />
+
+  <h2>Employee Manager</h2>
+
+  <input [(ngModel)]="firstName" placeholder="First Name" />
+  <input [(ngModel)]="lastName" placeholder="Last Name" />
+  <input [(ngModel)]="email" placeholder="Email" />
+  <input [(ngModel)]="title" placeholder="Title" />
+  <button class="primary-btn" (click)="createEmployee()">Create Employee</button>
+
+  <button class="primary-btn" (click)="fetchEmployees()">Fetch Employees</button>
+  <div *ngFor="let e of employees" class="employee-item">
+    <div>
+      <strong>{{ e.firstName }} {{ e.lastName }}</strong> ({{ e.email }}) - {{ e.title }}
+    </div>
+    <div>
+      <button (click)="editEmployee(e)">Edit</button>
+      <button (click)="deleteEmployee(e)">Delete</button>
+    </div>
   </div>
 </div>

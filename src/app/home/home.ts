@@ -1,73 +1,112 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { ChromeService } from '../services/chrome';
+import { EmployeeService, Employee } from '../services/employee';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
 })
 export class Home {
-  cookies: chrome.cookies.Cookie[] = [];
-  blockUrl: string = '';
-  getUrl: string = '';
+  // -------- Cookies --------
+  cookies: any[] = [];
+  getUrl = '';
+  blockUrl = '';
 
-  getCookies() {
-    console.log('Get Cookies clicked:', this.getUrl);
-    let url = this.getUrl.trim();
-    if (!url) url = 'https://www.google.com';
+  // -------- Employees --------
+  employees: Employee[] = [];
+  firstName = '';
+  lastName = '';
+  email = '';
+  title = '';
+
+  constructor(private chromeService: ChromeService, private empService: EmployeeService) {
+    this.fetchEmployees(); // prefetch employees
+  }
+
+  // -------- Cookie methods --------
+  fetchCookies() {
+    let url = (this.getUrl || '').trim() || 'https://www.google.com';
     if (!url.startsWith('http')) url = 'https://' + url;
-    console.log('Final URL for getCookies:', url);
 
-    chrome.cookies.getAll({ url }, (cookies) => {
-      console.log('Cookies received:', cookies);
-      this.cookies = cookies;
-      if (!cookies.length) alert(`No cookies found for ${url}`);
+    this.chromeService
+      .getCookies(url)
+      .then((c) => (this.cookies = c))
+      .catch((err) => alert(err));
+  }
+
+  onDeleteCookie(c: any) {
+    this.chromeService
+      .deleteCookie(c)
+      .then(() => this.fetchCookies())
+      .catch((err) => alert(err));
+  }
+
+  onBlockHttpCookie() {
+    this.chromeService
+      .blockHttpCookie(this.blockUrl)
+      .then(() => {
+        alert(`HTTP cookies blocked for ${this.blockUrl}`);
+        this.blockUrl = '';
+      })
+      .catch((err) => alert(err));
+  }
+
+  // -------- Employee methods --------
+  fetchEmployees() {
+    this.empService.getEmployees().subscribe({
+      next: (data: Employee[]) => (this.employees = data),
+      error: (err: any) => console.error('fetchEmployees error', err),
     });
   }
 
-  deleteCookie(cookie: chrome.cookies.Cookie) {
-    console.log('Delete cookie:', cookie);
-    const domain = cookie.domain.startsWith('.') ? cookie.domain.substring(1) : cookie.domain;
-    const url = `https://${domain}${cookie.path}`;
-    chrome.cookies.remove({ url, name: cookie.name }, () => {
-      console.log(`Cookie ${cookie.name} removed`);
-      this.getCookies();
-    });
-  }
-
-  blockHttpCookie() {
-    console.log('Block HTTP Cookies clicked:', this.blockUrl);
-    let url = this.blockUrl.trim();
-    if (!url) {
-      alert('Enter URL to block HTTP cookies!');
+  createEmployee() {
+    if (!this.firstName || !this.lastName || !this.email) {
+      alert('First name, last name and email are required');
       return;
     }
-
-    if (url.endsWith('/')) url = url.slice(0, -1);
-    if (!url.startsWith('http')) url = `*://${url}/*`;
-
-    console.log('Final URL pattern for blocking:', url);
-
-    const rule: chrome.declarativeNetRequest.Rule = {
-      id: Math.floor(Date.now() % 2147483647),
-      priority: 1,
-      action: { type: 'block' as chrome.declarativeNetRequest.RuleActionType },
-      condition: {
-        urlFilter: url,
-        resourceTypes: ['main_frame', 'sub_frame', 'xmlhttprequest', 'script', 'image'],
-      },
+    const emp: Employee = {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      email: this.email,
+      title: this.title,
     };
+    this.empService.createEmployee(emp).subscribe({
+      next: () => {
+        this.firstName = this.lastName = this.email = this.title = '';
+        this.fetchEmployees();
+      },
+      error: (err: any) => alert('Create failed: ' + err.message),
+    });
+  }
 
-    console.log('Rule to add:', rule);
+  editEmployee(e: Employee) {
+    const updatedFirst = prompt('First name', e.firstName) || e.firstName;
+    const updatedLast = prompt('Last name', e.lastName) || e.lastName;
+    const updatedEmail = prompt('Email', e.email) || e.email;
+    const updatedTitle = prompt('Title', e.title || '') || e.title;
 
-    chrome.declarativeNetRequest.updateDynamicRules({ addRules: [rule], removeRuleIds: [] }, () => {
-      console.log(`Rule added for ${url}`);
-      alert(`HTTP cookies blocked for ${url}`);
-      this.blockUrl = '';
+    const updated: Employee = {
+      id: e.id,
+      firstName: updatedFirst,
+      lastName: updatedLast,
+      email: updatedEmail,
+      title: updatedTitle,
+    };
+    this.empService.updateEmployee(updated).subscribe({
+      next: () => this.fetchEmployees(),
+      error: (err: any) => alert('Update failed: ' + err.message),
+    });
+  }
+
+  deleteEmployee(e: Employee) {
+    this.empService.deleteEmployee(e.id).subscribe({
+      next: () => this.fetchEmployees(),
+      error: (err: any) => alert('Delete failed: ' + err.message),
     });
   }
 }

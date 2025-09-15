@@ -10,16 +10,14 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./header.css'],
 })
 export class Header {
-  username: string = '';
-  password: string = '';
+  username = '';
+  password = '';
 
   login() {
     if (!this.username || !this.password) {
       alert('Enter both username and password!');
       return;
     }
-
-    // For now, just show an alert (later you can integrate with backend)
-    alert(`Logging in as: ${this.username}`);
+    alert(`Logging in as ${this.username} (this is a UI stub).`);
   }
 }
